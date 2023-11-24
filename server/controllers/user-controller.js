@@ -31,7 +31,7 @@ module.exports = {
   async login({ body }, res) {
     const user = await User.findOne({ $or: [{ username: body.username }, { email: body.email }] });
     if (!user) {
-      return res.status(400).json({ message: "Can't find this user" });
+      return res.status(400).json({ message: 'The supplied user could not be found' });
     }
 
     const correctPw = await user.isCorrectPassword(body.password);
@@ -66,7 +66,7 @@ module.exports = {
       { new: true }
     );
     if (!updatedUser) {
-      return res.status(404).json({ message: "Couldn't find user with this id!" });
+      return res.status(404).json({ message: 'The supplied user could not be found.' });
     }
     return res.json(updatedUser);
   },

@@ -18,20 +18,24 @@ module.exports = {
   },
   // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)
   async createUser({ body }, res) {
+    try {
     const user = await User.create(body);
-
+    
     if (!user) {
       return res.status(400).json({ message: 'Something is wrong!' });
     }
     const token = signToken(user);
     res.json({ token, user });
-  },
+  } catch (error) { 
+    console.error(error);
+    res.status(500).json({ message: "An internal server error has occurred."})
+  }},
   // login a user, sign a token, and send it back (to client/src/components/LoginForm.js)
   // {body} is destructured req.body
   async login({ body }, res) {
     const user = await User.findOne({ $or: [{ username: body.username }, { email: body.email }] });
     if (!user) {
-      return res.status(400).json({ message: 'The supplied user could not be found' });
+      return res.status(400).json({ message: "The user could not be found." });
     }
 
     const correctPw = await user.isCorrectPassword(body.password);
